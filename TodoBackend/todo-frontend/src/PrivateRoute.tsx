@@ -6,11 +6,8 @@ const PrivateRoute = ({children}: any) => {
     const userDetails = useSelector((state:any) => state.loggedInUser.userDetails);
     if(userDetails.name)
         return children;
-    return (
 
-                 <Navigate to="/login" />);
-                
-    
+    return (<Navigate to="/login" />);                    
 };
 
 export default PrivateRoute;
