@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -96,10 +97,14 @@ public class AppController {
         if (authentication != null) {
 
             user = authentication.getName();
-            if (authentication.getPrincipal() != null)
+            if (authentication.getPrincipal() != null && authentication.getPrincipal() instanceof Jwt) {
+                
+                Jwt jwt = (Jwt)authentication.getPrincipal();
+                user = user + ", " + jwt.getSubject();
+            }
+            else if(authentication.getPrincipal() != null) 
                 user = user + ", " + authentication.getPrincipal().toString();
         }
-
         return ResponseEntity.ok("todo data 'so far' for " + user);
     }
 }
