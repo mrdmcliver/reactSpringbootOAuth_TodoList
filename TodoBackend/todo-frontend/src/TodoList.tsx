@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
+interface Todo {
+    description: string;
+    done?: boolean;
+}
+
 const TodoList = ({children}: any) => {
 
     const [todoRes, setTodoRes] = useState<string>();
     const userDetails = useSelector((state:any) => state.loggedInUser.userDetails);
+    const [todos, setTodos] = useState<Todo[]>([]);
+    const [todo, setTodo] = useState<string>('');
     
     useEffect(() => {
 
@@ -24,10 +31,23 @@ const TodoList = ({children}: any) => {
         });
     }, []);
 
+    function addTodo() {
+
+        setTodos([...todos, {description: todo}]);
+        setTodo('');
+    }
+
     return (
         <>
             <h1>loading todos...</h1>
             <p>{todoRes}</p> 
+            <ul>
+            {todos.map(t => 
+                <li>{t.description}</li>
+            )}
+            </ul>
+            <input type="text" onChange={e => setTodo(e.target.value)} value={todo}/>
+            <button disabled={todo.length < 3} onClick={addTodo}>Add</button>
         </>
     )
 };
