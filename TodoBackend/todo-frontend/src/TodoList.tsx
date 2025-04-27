@@ -1,5 +1,6 @@
 import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { useSelector } from "react-redux";
+import useTodosRepository from './TodosRepository';
 
 interface TTodo {
     description: string;
@@ -37,27 +38,14 @@ const Todo = ({todo, editTodo}: {todo: TTodo, editTodo: (t: TTodo) => any}) => {
 const TodoList = ({children}: any) => {
 
     const userDetails = useSelector((state:any) => state.loggedInUser.userDetails);
-    const [todoRes, setTodoRes]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState<string>();
+    const todosRepository = useTodosRepository(userDetails.token);
     const [todos, setTodos] = useState<TTodo[]>([]);
     const [newTodo, setNewTodo] = useState<string>('');
     
     useEffect(() => {
 
-        fetch('/api/todos', {
-
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + userDetails.token
-            },
-        })
-        .then(res => res.text())
-        .then(str => setTodoRes(str)) // TODO: start retrieving a list of todos from the backend
-        .catch(err => {
-            setTodoRes(err.toString());
-        });
-    }, []); //TODO: Im using effect wrong here, should  have userDetails.token in the dependency array
+        todosRepository.find();
+    }, []); 
 
     function updateTodo(todo: TTodo): any {
 
@@ -82,7 +70,7 @@ const TodoList = ({children}: any) => {
     return (
         <>
             <h1>loading todos...</h1>
-            <p>{todoRes}</p> 
+            <p>{todosRepository.todoRes}</p> 
             <ul>
                 {todos.map((t, _i) => 
                     <Todo todo={t} editTodo={updateTodo} />

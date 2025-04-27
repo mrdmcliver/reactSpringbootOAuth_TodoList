@@ -5,7 +5,7 @@ const loginInSlice = createSlice({
     name: "LoginStateManager",
     
     initialState: {
-        userDetails : {name: null, token: null}, // not too sure if it's a good idea to keep token here? Possibly use localstorage instead?
+        userDetails : {name: null, token: null}, // not too sure if it's a good idea to keep token here? 
     },
     
     reducers: {
