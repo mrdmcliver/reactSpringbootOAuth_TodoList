@@ -1,6 +1,5 @@
 
 import { JSX } from 'react/jsx-runtime';
-import './App.css';
 import { useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
