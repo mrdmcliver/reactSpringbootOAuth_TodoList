@@ -7,4 +7,7 @@ module.exports = {
     '.(ts|tsx)': 'ts-jest'
   },
   moduleFileExtensions: ['ts', 'tsx', 'js'],
+  moduleNameMapper: {
+    '\\.(css|less)$': '<rootDir>/src/styleMock.js',
+  }
 };
