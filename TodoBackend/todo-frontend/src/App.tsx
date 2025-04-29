@@ -1,33 +1,39 @@
 
 import { JSX } from 'react/jsx-runtime';
-import { useEffect, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
+import './App.css';
 import { Link, Outlet } from 'react-router-dom';
+import React from 'react';
 
-type AppComponent = (attr:{title: string}) => JSX.Element;
+type attr = {title: string } ;
 
-const App: AppComponent = (attr) => {
+class App extends React.Component<attr, {message: string}> {
 
-  const [message, setMessage] = useState<string>('loading...');
+  constructor(props: attr) {
+    super(props);
+    this.state = {message: ''};
+  }
 
-  useEffect(() => {
+  componentDidMount(): void {
 
     fetch('/api/auth/test').then(
-      res => res.text().then(val => setMessage(val))
+      res => res.text().then(val => this.setState(s => ({message: val})))
     );
-  }, []);
-  
-  return (
+  }
+
+  render(): any {
+    return (
     <>
       <div className="App">
         <header className="App-header">
-          <h1>{attr.title}</h1>
-          <p>{message}</p>
+          <h1>{this.props.title}</h1>
+          <p>{this.state.message}</p>
           <Link to="/todos">View the todo list</Link>
           <Outlet/>
         </header>
       </div>
-    </>
-  );
+    </>);
+  }
 }
 
 export default App;

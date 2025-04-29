@@ -41,10 +41,12 @@ const TodoList = ({children}: any) => {
     const todosRepository = useTodosRepository(userDetails.token);
     const [todos, setTodos] = useState<TTodo[]>([]);
     const [newTodo, setNewTodo] = useState<string>('');
+    const [todoRes, setTodoRes] = useState<string>('');
     
     useEffect(() => {
 
-        todosRepository.find();
+        todosRepository.find().then(s => setTodoRes(s))
+                       .catch(err => setTodoRes(err.toString()));
     }, []); 
 
     function updateTodo(todo: TTodo): any {
@@ -70,7 +72,7 @@ const TodoList = ({children}: any) => {
     return (
         <>
             <h1>loading todos...</h1>
-            <p>{todosRepository.todoRes}</p> 
+            <p>{todoRes}</p> 
             <ul>
                 {todos.map((t, _i) => 
                     <Todo todo={t} editTodo={updateTodo} />

@@ -2,12 +2,10 @@ import { Dispatch, SetStateAction, useState } from "react";
 
 const useTodosRepository = (token: string) => {
 
-    const [todoRes, setTodoRes]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState<string>();
-
     /** finds all todos */
-    const find = () => {
+    const find: () => Promise<string> = () => {
 
-        fetch('/api/todos', {
+        return fetch('/api/todos', {
 
             method: 'GET',
             headers: {
@@ -16,14 +14,10 @@ const useTodosRepository = (token: string) => {
                 'Authorization': 'Bearer ' + token
             },
         })
-        .then(res => res.text())
-        .then(str => setTodoRes(str)) // TODO: start retrieving a list of todos from the backend
-        .catch(err => {
-            setTodoRes(err.toString());
-        });
+        .then(res => res.text()); // TODO: start retrieving a list of todos from the backend
     }
 
-    return {todoRes, find};
+    return {find};
 }
 
 export default useTodosRepository;
