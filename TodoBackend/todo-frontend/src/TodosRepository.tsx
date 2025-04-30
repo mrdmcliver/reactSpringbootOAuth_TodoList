@@ -3,9 +3,9 @@ import { Dispatch, SetStateAction, useState } from "react";
 const useTodosRepository = (token: string) => {
 
     /** finds all todos */
-    const find: () => Promise<string> = () => {
+    const find: (name: string) => Promise<any> = (name) => {
 
-        return fetch('/api/todos', {
+        return fetch('/api/todos/' + name, {
 
             method: 'GET',
             headers: {
@@ -14,7 +14,9 @@ const useTodosRepository = (token: string) => {
                 'Authorization': 'Bearer ' + token
             },
         })
-        .then(res => res.text()); // TODO: start retrieving a list of todos from the backend
+        .then(res => {
+            return res.json();
+         }); 
     }
 
     return {find};
