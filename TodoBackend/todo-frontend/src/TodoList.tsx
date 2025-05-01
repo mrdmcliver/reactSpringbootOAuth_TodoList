@@ -1,16 +1,17 @@
-import { useEffect, useState, Dispatch, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import useTodosRepository from './TodosRepository';
 
-interface TTodo {
+export interface TTodo {
     task: string;
-    done?: boolean;
-    id: number;
+    completed?: boolean;
+    id: any;
 }
 
 const Todo = ({todo, editTodo}: {todo: TTodo, editTodo: (t: TTodo) => any}) => { // TODO: possibly move this out to own file, but maybe not as todo shouldnt be reused
 
     const [todoForEdit, setTodoForEdit] = useState<string>(todo.task);
+    const [todoDone, setTodoDone] = useState<boolean>(todo.completed ?? false);
     const [indexForTodoEdit, setIndexForTodoEdit] = useState<boolean>(false); 
 
     function enableEdit() {
@@ -20,16 +21,20 @@ const Todo = ({todo, editTodo}: {todo: TTodo, editTodo: (t: TTodo) => any}) => {
     function callEditTodo() {
 
         todo.task = todoForEdit;
+        todo.completed = todoDone;
         editTodo(todo); // TODO: hook this up to backend before lifting up state
         setIndexForTodoEdit(false);
     }
 
     return (
         <>
-            {(indexForTodoEdit ? <li><input value={todoForEdit} onChange={e => setTodoForEdit(e.target.value)}/>
-                                 <button disabled={todoForEdit.length < 3} onClick={callEditTodo}>Update</button></li> :
+            {(indexForTodoEdit ? <li>
+                                    <input value={todoForEdit} onChange={e => setTodoForEdit(e.target.value)}/>
+                                    <input type="checkbox" checked={todoDone} onChange={e => setTodoDone(e.target.checked)} />
+                                    <button disabled={todoForEdit.length < 3} onClick={callEditTodo}>Update</button>
+                                </li> :
 
-                                 <li>{todo.task}<button onClick={enableEdit}>Edit</button></li>
+                                 <li>{todo.task}<input disabled={true} type="checkbox" checked={todoDone}/><button onClick={enableEdit}>Edit</button></li>
             )}
         </>
     );
@@ -64,10 +69,11 @@ const TodoList = ({children}: any) => {
         setTodos([...updatedTodos]);
     }
 
-    function addTodo() {
+    async function addTodo() {
 
-        const createdTodo: TTodo = {task: newTodo, id: todos.length + 1}
-        setTodos([...todos, createdTodo]); // TODO: call through to backend before adding to array.
+        const res = await todosRepository.create(userDetails.name, newTodo); 
+        const createdTodo: TTodo = {task: res.task, id: res.id, completed: res.completed};
+        setTodos([...todos, createdTodo]); 
         setNewTodo('');
     }
 

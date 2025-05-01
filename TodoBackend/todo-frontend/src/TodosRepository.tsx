@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction, useState } from "react";
 
 const useTodosRepository = (token: string) => {
 
@@ -18,8 +17,27 @@ const useTodosRepository = (token: string) => {
             return res.json();
          }); 
     }
+    const create: (name: string, todo: string) => Promise<any> = (name, todo) => {
 
-    return {find};
+        return fetch('/api/todo/create', {
+
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify( {
+                username: name,
+                description: todo
+            })
+        })
+        .then(res => {
+            return res.json();
+         }); 
+    }
+
+    return {find, create};
 }
 
 export default useTodosRepository;

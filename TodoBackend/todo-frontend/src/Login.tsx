@@ -32,8 +32,10 @@ const Login = () => {
               password: data.password,
             })
           }).then(res => { 
+            
             return res.json();
-          }).then(tokenDTO => {
+          }, r => setApiError(r.toString()))
+          .then(tokenDTO => {
 
             dispatch(setLoggedInUser({name: data.userName, token: tokenDTO.token}));
             navigate('/todos');
