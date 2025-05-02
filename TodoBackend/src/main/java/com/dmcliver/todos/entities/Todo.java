@@ -22,7 +22,7 @@ public class Todo {
     private String task;
     
     @Column(name = "completed")
-    private boolean completed;
+    private Boolean completed;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -44,11 +44,11 @@ public class Todo {
         this.task = task;
     }
 
-    public boolean isCompleted() {
+    public Boolean isCompleted() {
         return completed;
     }
 
-    public void setCompleted(boolean completed) {
+    public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
 

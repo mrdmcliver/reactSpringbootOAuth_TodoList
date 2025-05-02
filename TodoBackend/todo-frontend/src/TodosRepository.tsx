@@ -37,7 +37,28 @@ const useTodosRepository = (token: string) => {
          }); 
     }
 
-    return {find, create};
+    const update: (id: any, todo: string, completed: boolean) => Promise<any> = (id, todo, completed) => {
+
+        return fetch('/api/todo/update', {
+
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify( {
+                id: id,
+                description: todo,
+                completed: completed
+            })
+        })
+        .then(res => {
+            return res.json();
+         }); 
+    }
+
+    return {find, create, update};
 }
 
 export default useTodosRepository;

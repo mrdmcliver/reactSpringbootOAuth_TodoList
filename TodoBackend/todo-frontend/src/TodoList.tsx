@@ -56,13 +56,21 @@ const TodoList = ({children}: any) => {
         .catch(err => setErrors(err.toString()));
     }, []); 
 
-    function updateTodo(todo: TTodo): any {
+    async function updateTodo(todo: TTodo): Promise<any> {
 
+        const res = await todosRepository.update(todo.id, todo.task, todo.completed ?? false);
+        if(!res.valid) {
+
+            setErrors("couldn't update todo");
+            return; 
+        }
         const updatedTodos = todos.map(t => {
 
-            if (t.id === todo.id)  
-                t.task = todo.task ?? '';
+            if (t.id === todo.id) {
 
+                t.task = todo.task ?? '';
+                t.completed = todo.completed;
+            }
             return t;
         });
 

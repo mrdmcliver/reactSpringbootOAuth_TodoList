@@ -1,9 +1,13 @@
 package com.dmcliver.todos.model;
 
+import java.io.Serializable;
+
 import org.hibernate.validator.constraints.Length;
 import jakarta.validation.constraints.NotEmpty;
 
-public class LoginForm {
+public class LoginForm implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @NotEmpty(message = "Please enter a name")
     private String name;
