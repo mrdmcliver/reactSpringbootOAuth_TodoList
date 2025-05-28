@@ -16,6 +16,5 @@ const loginInSlice = createSlice({
     }
 });
 
-const { actions, reducer} = loginInSlice;
-export const { setLoggedInUser } = actions;
-export default reducer;
+export const setLoggedInUser = loginInSlice.actions.setLoggedInUser;;
+export const reducer = loginInSlice.reducer;

@@ -9,6 +9,7 @@ import store from './LoginStore';
 import PrivateRoute from './PrivateRoute';
 import TodoList from './TodoList';
 import Login from './Login';
+import useLoginRepository from './LoginRepository';
 
 const router = createBrowserRouter(
 
@@ -20,7 +21,7 @@ const router = createBrowserRouter(
     >
       <Route path='todos' element={<PrivateRoute><TodoList/></PrivateRoute>} >
       </Route>
-      <Route path="login" element={<Login/>} />
+      <Route path="login" element={<Login repository={useLoginRepository()}/>} />
     </Route>
   )
 );

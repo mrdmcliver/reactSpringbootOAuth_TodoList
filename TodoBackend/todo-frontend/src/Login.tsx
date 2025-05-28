@@ -2,64 +2,56 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setLoggedInUser } from "./LoginSlice";
-import { useState } from "react";
+import { Dispatch, useState } from "react";
+import { ILoginRepository } from "./LoginRepository";
 
 interface LoginForm {
   userName: string;
   password: string;
 }
 
-const Login = () => {
+export interface LoginViewModel {
 
-    let navigate = useNavigate();
+  repository: ILoginRepository;
+  loginErrorEvent:(err: any) => void;
+  loginError:any;
+  navigate:(url:string) => void;
+  notifyLoggedIn:Dispatch<{ payload: any; type: string; }>;
+}
 
-    const {register, handleSubmit, formState:{errors}} = useForm<LoginForm>();
-    const dispatch = useDispatch();
-    const [apiError, setApiError] = useState(null);
+export const viewModel: LoginViewModel = {} as LoginViewModel;
 
-    const submitLogin: SubmitHandler<LoginForm> = (data: LoginForm) => {
+export const submitLogin: SubmitHandler<LoginForm> = async (data: LoginForm) => {
 
-        fetch('/api/auth/login', {
+  const tokenDTO: any = await viewModel.repository.authenticateUser(data.userName, data.password);
+  viewModel.notifyLoggedIn(setLoggedInUser({name: data.userName, token: tokenDTO.token}));
+  viewModel.navigate('/todos');
+}
 
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+const Login = (props:{repository: ILoginRepository}) => {
 
-              name: data.userName,
-              password: data.password,
-            })
-          }).then(res => { 
-            
-            return res.json();
-          }, r => setApiError(r.toString()))
-          .then(tokenDTO => {
+  viewModel.navigate = useNavigate();
+  viewModel.repository = props.repository;
 
-            dispatch(setLoggedInUser({name: data.userName, token: tokenDTO.token}));
-            navigate('/todos');
-          }).catch(err => {
+  const {register, handleSubmit, formState:{errors}} = useForm<LoginForm>();
+  viewModel.notifyLoggedIn = useDispatch<any>();
+  [viewModel.loginError, viewModel.loginErrorEvent] = useState(null);
 
-            setApiError(err.toString());
-          });
-    }
-
-    return (
-        <>
-            {apiError && <h5>You have an error {apiError}</h5>}
-            <form onSubmit={handleSubmit(submitLogin)} className="form">
-              
-                <label>Name:</label>
-                <input type="text" {...register("userName", {required: true, minLength: 3})} />
-                {errors.userName && <p role="alert">please enter a proper name</p>}
-                <label>Password:</label>
-                <input type="password" {...register("password", {required: true, minLength: 6})} />
-                {errors.password && <p role="alert">password needs to be at least six characters</p>}
-                <input type="submit" />
-            </form>
-        </>
-    );
+  return (
+    <>
+      {viewModel.loginError && <h5>You have an error {viewModel.loginError}</h5>}
+      <form onSubmit={handleSubmit(submitLogin)} className="form">
+        
+          <label>Name:</label>
+          <input type="text" {...register("userName", {required: true, minLength: 3})} />
+          {errors.userName && <p role="alert">please enter a proper name</p>}
+          <label>Password:</label>
+          <input type="password" {...register("password", {required: true, minLength: 6})} />
+          {errors.password && <p role="alert">password needs to be at least six characters</p>}
+          <input type="submit" />
+      </form>
+    </>
+  );
 };
 
 export default Login;
